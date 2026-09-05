@@ -1,0 +1,10 @@
+[
+  {
+    "interface": "Local Area Connection",
+    "address": "10.4.2.2"
+  },
+  {
+    "interface": "Ethernet",
+    "address": "192.168.8.100"
+  }
+]

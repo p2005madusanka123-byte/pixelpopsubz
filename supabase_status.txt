@@ -1,0 +1,8 @@
+Reading config from: .env
+-----------------------------------------------------
+DATABASE_URL configured: true
+NEXT_PUBLIC_SUPABASE_URL: https://bymnijrmbemrqtlybees.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY: EXISTS (starts with sb_publish...)
+-----------------------------------------------------
+Connecting to PostgreSQL database...
+❌ Connection Error: (ENOTFOUND) tenant/user postgres.bymnijrmbemrqtlybees not found

@@ -1,0 +1,2 @@
+Supabase URL: https://bymnijrmbemrqtlybees.supabase.co
+Users in public.users table: []

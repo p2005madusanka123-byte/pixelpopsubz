@@ -1,0 +1,2 @@
+✅ Supabase REST API connected successfully! Movies count: 5
+Data: [{"id":"d439155b-a6e0-4497-a8cd-aab4f6a88429","title":"Sons of Anarchy"},{"id":"e4eca4e4-b362-4f1f-aa05-448470197acf","title":"House Of The Dragon"},{"id":"8990c886-92d6-4bc3-a5bb-2bca8f3a9a8a","title":"Backrooms 2026"},{"id":"38c02fe6-2d82-40eb-a897-a95a7b1aa343","title":"The East Palace (2026)"},{"id":"4419eb72-7023-4654-ab76-5d1c72a1306f","title":"Disclosure Day 2026"}]

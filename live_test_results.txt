@@ -1,0 +1,36 @@
+=====================================================
+ PixelSubzLk - Full Live System Verification Test
+=====================================================
+
+[✓ PASS] 1. Homepage (Real TV Counts & Subtitles)
+       URL: http://127.0.0.1:3000/
+       Status: 200 OK (7737ms) | Size: 68.9 KB
+
+[✓ PASS] 2. Search API: query "sons"
+       URL: http://127.0.0.1:3000/api/search?q=sons
+       Status: 200 OK (23028ms) | Size: 0.0 KB
+
+[✓ PASS] 3. Search API: query "sons "
+       URL: http://127.0.0.1:3000/api/search?q=sons%20
+       Status: 200 OK (7198ms) | Size: 0.0 KB
+
+[✓ PASS] 4. Search API: query "dragon"
+       URL: http://127.0.0.1:3000/api/search?q=dragon
+       Status: 200 OK (7130ms) | Size: 0.0 KB
+
+[✗ FAIL] 5. Real TV Series Detail (Dexter)
+       URL: http://127.0.0.1:3000/movies/b16bd0d7-79c7-48db-acbf-5b55d6be7840
+       Status: 404 Not Found (36296ms) | Size: 22.9 KB
+
+[✗ FAIL] 6. Real TV Episode (Dexter S01E01)
+       URL: http://127.0.0.1:3000/movies/b16bd0d7-79c7-48db-acbf-5b55d6be7840/season/1/episode/1
+       Status: 404 Not Found (18432ms) | Size: 25.6 KB
+
+[✓ PASS] 7. Admin Login Page (Sign In & Create Admin)
+       URL: http://127.0.0.1:3000/admin/login
+       Status: 200 OK (3593ms) | Size: 48.6 KB
+
+-----------------------------------------------------
+ Summary: 5 Passed, 2 Failed out of 7 tests
+ Overall Health: 🔴 SOME ISSUES DETECTED
+=====================================================

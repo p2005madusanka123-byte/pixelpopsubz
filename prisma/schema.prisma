@@ -1,0 +1,179 @@
+// PixelSubzLk - Prisma Schema
+// Full schema with Season / Episode / per-episode Telegram links
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// USER
+// ─────────────────────────────────────────────────────────────────────────────
+model User {
+  id        String            @id // Matches Supabase Auth user UUID
+  email     String            @unique
+  role      String            @default("USER") // "USER" | "ADMIN" | "UPLOADER"
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  subtitles Subtitle[]
+  requests  DownloadRequest[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MOVIE  (covers both Feature Films and TV Series parent record)
+// ─────────────────────────────────────────────────────────────────────────────
+model Movie {
+  id            String         @id @default(uuid())
+  title         String
+  originalTitle String?
+  type          String         @default("MOVIE") // "MOVIE" | "TV_SHOW"
+
+  // Rich metadata
+  description   String?
+  releaseDate   String?        // "YYYY-MM-DD"
+  year          Int?           // extracted year for fast filtering
+  runtime       Int?           // minutes (movies); avg episode runtime (TV)
+  imdbRating    Float?         // e.g. 8.5
+  imdbId        String?        // tt1234567
+  tmdbId        String?        @unique
+  genres        String[]       // ["Action", "Thriller", ...]
+  seoTags       String[]       // extra keyword tags for SEO
+  language      String?        @default("Sinhala") // subtitle language label
+  country       String?        // production country
+  status        String?        // "Released" | "Ongoing" | "Ended" | "Cancelled"
+  totalSeasons  Int?           // TV series: total season count
+
+  // Images
+  posterPath    String?
+  backdropPath  String?
+  trailerUrl    String?        // YouTube embed URL
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  subtitles     Subtitle[]     // movie-level subtitles (for feature films)
+  telegramLinks TelegramLink[] // movie-level Telegram links (feature films)
+  seasons       Season[]       // TV Series seasons
+
+  @@map("movies")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SEASON  (TV Series only)
+// ─────────────────────────────────────────────────────────────────────────────
+model Season {
+  id           String    @id @default(uuid())
+  movieId      String
+  movie        Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  seasonNumber Int
+  title        String?   // e.g. "Season 1" or custom name
+  description  String?
+  releaseDate  String?
+  posterPath   String?
+  episodeCount Int?      // total episodes in season (informational)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  episodes     Episode[]
+
+  @@unique([movieId, seasonNumber])
+  @@map("seasons")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EPISODE  (belongs to a Season)
+// ─────────────────────────────────────────────────────────────────────────────
+model Episode {
+  id            String         @id @default(uuid())
+  seasonId      String
+  season        Season         @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeNumber Int
+  title         String?        // e.g. "The Rains of Castamere"
+  description   String?        // episode synopsis
+  airDate       String?        // "YYYY-MM-DD"
+  runtime       Int?           // episode runtime in minutes
+  imdbRating    Float?         // per-episode IMDB rating
+  stillPath     String?        // episode thumbnail image URL
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Per-episode subtitle & Telegram links
+  subtitles     Subtitle[]
+  telegramLinks TelegramLink[]
+
+  @@unique([seasonId, episodeNumber])
+  @@map("episodes")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SUBTITLE  (can belong to a Movie -OR- an Episode)
+// ─────────────────────────────────────────────────────────────────────────────
+model Subtitle {
+  id             String   @id @default(uuid())
+
+  // Polymorphic: one of these will be set
+  movieId        String?
+  movie          Movie?   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  episodeId      String?
+  episode        Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  language       String   @default("Sinhala")
+  fileUrl        String   // Direct download URL
+  fileName       String
+  version        String?  // e.g. "BluRay.1080p", "WEBRip.720p" – for multi-version subs
+  downloadsCount Int      @default(0)
+  uploaderId     String
+  uploader       User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("subtitles")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TELEGRAM LINK  (can belong to a Movie -OR- an Episode)
+// ─────────────────────────────────────────────────────────────────────────────
+model TelegramLink {
+  id           String   @id @default(uuid())
+
+  // Polymorphic: one of these will be set
+  movieId      String?
+  movie        Movie?   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  episodeId    String?
+  episode      Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  quality      String?  // optional quality label
+  size         String?  // optional size
+  downloadUrl  String   // t.me/... link
+  label        String?  // optional custom label e.g. "Dual Audio"
+  clicksCount  Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("telegram_links")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DOWNLOAD REQUEST  (community subtitle requests)
+// ─────────────────────────────────────────────────────────────────────────────
+model DownloadRequest {
+  id          String   @id @default(uuid())
+  title       String
+  type        String   @default("MOVIE") // "MOVIE" | "TV_SHOW"
+  seasonNum   Int?
+  episodeNum  Int?
+  notes       String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      String   @default("PENDING") // "PENDING" | "FILLED" | "REJECTED"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("download_requests")
+}

@@ -1,0 +1,16 @@
+- [TV_SHOW] Sons of Anarchy -> Total Subs: 92 (Episodes: 92)
+- [TV_SHOW] House Of The Dragon -> Total Subs: 8 (Episodes: 8)
+- [MOVIE] Backrooms 2026 -> Total Subs: 1 (Episodes: 0)
+- [TV_SHOW] The East Palace (2026) -> Total Subs: 8 (Episodes: 8)
+- [MOVIE] Disclosure Day 2026 -> Total Subs: 1 (Episodes: 0)
+- [TV_SHOW] Dune: Prophecy -> Total Subs: 6 (Episodes: 6)
+- [MOVIE] Colony 2026 -> Total Subs: 1 (Episodes: 0)
+- [MOVIE] Anomie 2026 -> Total Subs: 1 (Episodes: 0)
+- [MOVIE] 72 Hours (2026) -> Total Subs: 1 (Episodes: 0)
+- [TV_SHOW] The Walking Dead: Dead City -> Total Subs: 3 (Episodes: 3)
+
+--- 2. Testing Search with "sons " (trailing space) ---
+Found 2 matches: ["Sons of Anarchy","Backrooms 2026"]
+
+--- 3. Testing Search with "dragon" ---
+Found 2 matches: ["House Of The Dragon","Supergirl (2026)"]
